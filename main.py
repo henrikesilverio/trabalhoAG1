@@ -1,51 +1,57 @@
 arquivo = open("palavras.txt")
 
-linhas = arquivo.readlines()
-palavras = linhas[0].split()
-listaDeAdjacencia = {}
+palavras = arquivo.read().split("\n")
+grafo = []
+tempo = 0
+
+# Construindo o grafo
 
 
 def diferemEmUmaPosicao(primeiro, segundo):
     diferenca = 0
-    for caractere in primeiro:
-        if caractere in segundo:
+    for i in range(0, len(primeiro)):
+        if primeiro[i] == segundo[i]:
             continue
         diferenca += 1
 
     return diferenca <= 1
 
-# Construindo o grafo
-
 
 for palavra in palavras:
-    listaDeAdjacencia[palavra] = []
-for chave in listaDeAdjacencia:
-    for palavra in palavras:
-        if chave != palavra and diferemEmUmaPosicao(chave, palavra):
-            listaDeAdjacencia[chave].append({
-                palavra: {"cor": "branco",
-                          "pred": {},
-                          "inicio": 0,
-                          "termino": 0}
-            })
+    grafo.append({
+        "nome": palavra,
+        "cor": "branco",
+        "pred": {},
+        "inicio": 0,
+        "termino": 0,
+        "adjacentes": []
+    })
+
+for i in range(0, len(grafo)):
+    for j in range(0, len(grafo)):
+        if grafo[i]["nome"] != grafo[j]["nome"] and diferemEmUmaPosicao(grafo[i]["nome"], grafo[j]["nome"]):
+            grafo[i]["adjacentes"].append(grafo[j])
 
 # Busca em profundidade
 
-def DFSVisit(vertice, tempo):
-    chave in vertice
-    tempo += 1
-    vertice.cor = "cinza"
-    vertice.inicio = tempo
-    for adjacente in listaDeAdjacencia[chave]:
-        if adjacente.cor == "branco":
-            adjacente.pred = vertice
+
+def DFSVisit(vertice):
+    global tempo
+    tempo += + 1
+    vertice["cor"] = "cinza"
+    vertice["inicio"] = tempo
+    for adjacente in vertice["adjacentes"]:
+        if adjacente["cor"] == "branco":
+            adjacente["pred"] = vertice
             DFSVisit(adjacente)
-    vertice.cor = "Preto"
+    vertice["cor"] = "Preto"
     tempo += 1
-    vertice.termino = tempo
+    vertice["termino"] = tempo
+
 
 def DFS(grafo, verticeInicial):
-    tempo = 0
-    for chave in listaDeAdjacencia:
-        for vertice in listaDeAdjacencia[chave]
-        if listaDeAdjacencia[chave]
+    for vertice in grafo:
+        if vertice["cor"] == "branco":
+            DFSVisit(vertice)
+
+DFS(grafo, grafo[0])
