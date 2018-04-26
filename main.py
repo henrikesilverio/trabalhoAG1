@@ -3,6 +3,7 @@ arquivo = open("palavras.txt")
 palavras = arquivo.read().split("\n")
 grafo = {}
 tempo = 0
+componentes_conexos = 0
 
 # Construindo o grafo
 
@@ -22,9 +23,9 @@ for palavra in palavras:
         "nome": palavra,
         "cor": "branco",
         "distancia": 999999999,
-        "predecessor": {},
         "tempo_inicio": 0,
         "tempo_termino": 0,
+        "predecessor": {},
         "adjacentes": []
     }
 
@@ -85,15 +86,21 @@ def DFSVisit(vertice):
         if adjacente["cor"] == "branco":
             adjacente["predecessor"] = vertice
             DFSVisit(adjacente)
-    vertice["cor"] = "Preto"
+    vertice["cor"] = "preto"
     tempo += 1
     vertice["tempo_termino"] = tempo
 
 
 def DFS(grafo, verticeInicial):
+    global componentes_conexos
+    for vertice in grafo.values():
+        vertice["cor"] = "branco"
+
     for vertice in grafo.values():
         if vertice["cor"] == "branco":
+            componentes_conexos += 1 
             DFSVisit(vertice)
 
 
-# DFS(grafo, grafo[palavras[0]])
+DFS(grafo, grafo[palavras[0]])
+print("Numero de componentes conexos é {0}".format(componentes_conexos))
