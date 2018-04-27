@@ -1,9 +1,7 @@
-abcd
-accd
-abbd
-bbcd
-dcba
-dcca
-dcea
-ccxx
-ccxa
+rato
+lata
+ralo
+mata
+gata
+nata
+mato

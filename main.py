@@ -1,6 +1,7 @@
 arquivo = open("palavras.txt")
 
 palavras = arquivo.read().split("\n")
+arquivo.close()
 grafo = {}
 tempo = 0
 componentes_conexos = 0
@@ -18,21 +19,28 @@ def diferemEmUmaPosicao(primeiro, segundo):
     return diferenca <= 1
 
 
-for palavra in palavras:
-    grafo[palavra] = {
-        "nome": palavra,
-        "cor": "branco",
-        "distancia": 999999999,
-        "tempo_inicio": 0,
-        "tempo_termino": 0,
-        "predecessor": {},
-        "adjacentes": []
-    }
+def criarGrafo():
+    global grafo
+    for palavra in palavras:
+        grafo[palavra] = {
+            "nome": palavra,
+            "cor": "branco",
+            "distancia": 999999999,
+            "tempo_inicio": 0,
+            "tempo_termino": 0,
+            "low": 0,
+            "predecessor": {},
+            "adjacentes": []
+        }
 
-for vertice_i in grafo.values():
-    for vertice_j in grafo.values():
-        if vertice_i["nome"] != vertice_j["nome"] and diferemEmUmaPosicao(vertice_i["nome"], vertice_j["nome"]):
-            vertice_i["adjacentes"].append(vertice_j)
+    for vertice_i in grafo.values():
+        for vertice_j in grafo.values():
+            if vertice_i["nome"] != vertice_j["nome"] and diferemEmUmaPosicao(vertice_i["nome"], vertice_j["nome"]):
+                vertice_i["adjacentes"].append(vertice_j)
+
+
+criarGrafo()
+
 
 # Busca em largura
 # Calcular a distancia entre duas palavras quaisquer e
@@ -74,12 +82,12 @@ print("a distância entre {0} a {1} e de {2}".format(grafo[palavras[0]]["nome"],
                                                     grafo[palavras[1]]["nome"],
                                                     grafo[palavras[1]]["distancia"]))
 
-# Busca em profundidade
+# Busca em profundidade, componentes conexos
 
 
 def DFSVisit(vertice):
     global tempo
-    tempo += + 1
+    tempo += 1
     vertice["cor"] = "cinza"
     vertice["tempo_inicio"] = tempo
     for adjacente in vertice["adjacentes"]:
@@ -98,9 +106,49 @@ def DFS(grafo, verticeInicial):
 
     for vertice in grafo.values():
         if vertice["cor"] == "branco":
-            componentes_conexos += 1 
+            componentes_conexos += 1
             DFSVisit(vertice)
 
 
 DFS(grafo, grafo[palavras[0]])
 print("Numero de componentes conexos é {0}".format(componentes_conexos))
+
+
+#  Pontos de articulação
+tempo = 0
+grafo = {}
+criarGrafo()
+
+def ehOSegundoFilho(vertice_filho, vertice_pai):
+    if len(vertice_pai["adjacentes"]) > 1:
+        if vertice_pai["adjacentes"][1]["nome"] == vertice_filho["nome"]:
+            return True
+    else:
+        return False
+
+def ArticulationPoint(vertice):
+    global tempo
+    tempo += 1
+    vertice["cor"] = "cinza"
+    vertice["tempo_inicio"] = tempo
+    vertice["low"] = vertice["tempo_inicio"]
+    for adjacente in vertice["adjacentes"]:
+        if adjacente["cor"] == "branco":
+            adjacente["predecessor"] = vertice
+            ArticulationPoint(adjacente)
+            
+            if not vertice["predecessor"]:
+                if ehOSegundoFilho(adjacente, vertice):
+                    print("{0} é um ponto de articulação".format(vertice["nome"]))
+            else:
+                vertice["low"] = min(vertice["low"], adjacente["low"])
+                if adjacente["low"] >= vertice["tempo_inicio"]:
+                    print("{0} é um ponto de articulação".format(vertice["nome"]))
+        elif (adjacente["nome"] != vertice["predecessor"]["nome"]) and adjacente["tempo_inicio"] < vertice["tempo_inicio"]:
+            vertice["low"] = min(vertice["low"], adjacente["tempo_inicio"])
+    
+    vertice["cor"] = "prento"
+    tempo += 1
+    vertice["tempo_termino"] = tempo
+
+ArticulationPoint(grafo[palavras[0]])
