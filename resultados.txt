@@ -1,0 +1,20 @@
+1 exemplo
+- Caminho: rato -> mato -> mata -> lata
+- Distancia: 3
+- Componentes conexos: 1
+- Pontos: mata, mato, rato
+- Pontes: (rato, ralo), (mato, mata), (rato, mato)
+
+2 exemplo
+- Caminho: abcd -> accd
+- Distancia: 1
+- Componentes conexos: 3
+- Pontos: abcd
+- Pontes: (abcd, accd), (abcd, abbd), (abcd, bbcd)
+
+3 exemplo
+- Caminho: abcd -> cbcd
+- Distancia: 1
+- Componentes conexos: 1
+- Pontos: cbcd, cbcd, abcd
+- Pontes: (cbcd, cbce), (cbcd, cfcd), (abcd, cbcd), (abcd, abdd)

@@ -1,4 +1,4 @@
-arquivo = open("palavras.txt")
+arquivo = open("exemplo3.txt")
 
 palavras = arquivo.read().split("\n")
 arquivo.close()
@@ -119,12 +119,14 @@ tempo = 0
 grafo = {}
 criarGrafo()
 
+
 def ehOSegundoFilho(vertice_filho, vertice_pai):
     if len(vertice_pai["adjacentes"]) > 1:
         if vertice_pai["adjacentes"][1]["nome"] == vertice_filho["nome"]:
             return True
     else:
         return False
+
 
 def ArticulationPoint(vertice):
     global tempo
@@ -136,19 +138,49 @@ def ArticulationPoint(vertice):
         if adjacente["cor"] == "branco":
             adjacente["predecessor"] = vertice
             ArticulationPoint(adjacente)
-            
             if not vertice["predecessor"]:
                 if ehOSegundoFilho(adjacente, vertice):
-                    print("{0} é um ponto de articulação".format(vertice["nome"]))
+                    print("{0} é um ponto de articulação".format(
+                        vertice["nome"]))
             else:
                 vertice["low"] = min(vertice["low"], adjacente["low"])
                 if adjacente["low"] >= vertice["tempo_inicio"]:
-                    print("{0} é um ponto de articulação".format(vertice["nome"]))
-        elif (adjacente["nome"] != vertice["predecessor"]["nome"]) and adjacente["tempo_inicio"] < vertice["tempo_inicio"]:
+                    print("{0} é um ponto de articulação".format(
+                        vertice["nome"]))
+        elif (adjacente["nome"] != vertice["predecessor"]["nome"]) and (adjacente["tempo_inicio"] < vertice["tempo_inicio"]):
             vertice["low"] = min(vertice["low"], adjacente["tempo_inicio"])
-    
+
     vertice["cor"] = "prento"
     tempo += 1
     vertice["tempo_termino"] = tempo
 
+
 ArticulationPoint(grafo[palavras[0]])
+
+# Pontes
+tempo = 0
+grafo = {}
+criarGrafo()
+
+
+def Bridges(vertice):
+    global tempo
+    tempo += 1
+    vertice["cor"] = "cinza"
+    vertice["tempo_inicio"] = tempo
+    vertice["low"] = vertice["tempo_inicio"]
+    for adjacente in vertice["adjacentes"]:
+        if adjacente["cor"] == "branco":
+            adjacente["predecessor"] = vertice
+            Bridges(adjacente)
+            vertice["low"] = min(vertice["low"], adjacente["low"])
+            if adjacente["low"] > vertice["tempo_inicio"]:
+                print("({0}, {1}) é uma ponte".format(vertice["nome"], adjacente["nome"]))
+        elif (adjacente["nome"] != vertice["predecessor"]["nome"]) and (adjacente["tempo_inicio"] < vertice["tempo_inicio"]):
+            vertice["low"] = min(vertice["low"], adjacente["tempo_inicio"])
+
+    vertice["cor"] = "prento"
+    tempo += 1
+    vertice["tempo_termino"] = tempo
+
+Bridges(grafo[palavras[0]])
